@@ -1,0 +1,294 @@
+<body>
+    <div class="nav"><div class="game">RAT IN A MAZE</div></div>
+    <p id="notify"></p>
+    <audio id="myAudio">
+      <source src="E:\WEB DEVELOPMENT PROJECTS\RAT IN A MAZE\tap.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="win">
+      <source src="E:\WEB DEVELOPMENT PROJECTS\RAT IN A MAZE\win.mp3" type="audio/mpeg">
+    </audio>
+    
+    <img src="E:\WEB DEVELOPMENT PROJECTS\RAT IN A MAZE\j.png" id="i">
+  <div id='root'><img id="jerry"src="E:\WEB DEVELOPMENT PROJECTS\RAT IN A MAZE\jerry.png" alt=""><img id="tom"src="E:\WEB DEVELOPMENT PROJECTS\RAT IN A MAZE\tom.png" alt=""></div>
+  <button id="btn">START</button>
+  <p id="notify"></p>
+  
+  </body>
+  
+  
+  <style>
+    #tom{
+      margin-left: 1200px;
+      margin-top: 200px;
+      height:200px;
+      width: 300px;
+    }
+    #jerry{
+      height:400px;
+      width:400px;
+      float: left;
+      margin-top: 80px;
+    }
+    #root{
+      float: left;
+      
+    }
+    .game{
+      color: white;
+      font-size: 50px;
+      text-align: center;
+      font-family: 'Courgette', cursive;
+      font-weight: bolder;
+    }
+    .nav{
+      position: sticky;
+      opacity: 0.4;
+      border:2px solid black;
+      padding: 10px;
+      background-color: black;
+    }
+    body{
+      background-image: url("https://images.unsplash.com/photo-1557683304-673a23048d34?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=282&q=80");
+      background-size: 1600px 1800px;
+      background-repeat: no-repeat;
+    }
+  
+    img{
+      height: 75px;
+      width: 75px;
+      position:absolute;
+      transition-duration: 1s;
+    }
+  
+   td,table {
+    border: 1px solid black;
+  }
+  
+  table {
+    border-collapse: collapse;
+    margin-left: 550px;
+      margin-top: 80px;
+  }
+  
+  td {
+    width: 80px;
+    height: 80px;
+  }
+  
+  #btn{
+    margin-top: 550px;
+    margin-left: -970px;
+    padding: 5px;
+    height: 50px;
+    width: 110px;
+    font-weight: bold;
+    font-size: 30px;
+    background-color: purple;
+    border:2px dashed black;
+    
+  font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  
+  }
+  
+  #notify{
+    font-family: cursive;
+    margin-left: 450px;
+  }
+  
+  
+  
+  </style>
+  
+  
+  
+  <script>
+    
+   
+  
+  let div=document.getElementById('root');
+  let grid=[[0,0,0,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],[0,0,0,1,1,0,0,0,0],[0,0,0,0,0,1,0,0,0],[0,0,0,0,1,1,0,0,0],[0,1,0,0,0,1,0,0,0],[0,1,1,1,0,0,0,0,0],[0,1,1,1,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]];
+  let offset=[[0,1,0,-1],[1,0,-1,0]];
+  let m=grid.length-2;
+  let finish_row=grid.length-2;
+  let finish_col=grid[0].length-2;
+  let start_row=1;
+  let start_col=1;
+  let pathlength=0;
+  let front=0,rear=0;
+  let path=new Array(2);
+  path[0]=new Array(100);
+  path[1]=new Array(100);
+  let here_row=1,here_col=1;
+  let neighbour_row=1,neighbour_col=1;
+  let queue=new Array(2);
+  queue[0]=new Array(100);
+  queue[1]=new Array(100);
+  let top_of_stack=0,i=0,j=0,g=0,h=0,dir=0;
+  let image=document.getElementById('i');
+  let margin_top=166,margin_left=-670;
+  image.style.marginTop=margin_top;
+    image.style.marginLeft=margin_left;
+  let count=0;
+  
+  
+  function draw(arr){
+    let table=document.createElement('table');
+  for(let a=0;a<arr.length;a++){
+    let tr=document.createElement("tr");
+    for(let b=0;b<arr[a].length;b++){
+  let td=document.createElement('td');
+  if(arr[1][1]==1){
+    let notify=document.getElementById('notify');
+    notify.innerText=" There no start path for Jerry to enter..";
+    notify.style.color="white";
+    notify.style.fontWeight="bold";
+    notify.style.fontSize=30;
+    image.style.display="none";
+  }
+  else if(a==1 && b==1 && arr[a][b]!=1){
+    td.style.backgroundColor="white";
+    td.innerText="START";
+    td.style.justifyContent="center";
+    td.style.textAlign="center";
+    td.style.fontSize=25;
+    td.style.fontWeight="bold";
+    td.style.color="green";
+  }
+  else if(a==arr.length-2 && b==arr[a].length-2 && arr[a][b]!=1){
+    td.style.backgroundColor="white";
+    td.innerText="FINISH";
+    td.style.justifyContent="center";
+    td.style.textAlign="center";
+    td.style.fontSize=25;
+    td.style.fontWeight="bold";
+    td.style.color="red";
+  }
+  if(arr[a][b]==1){
+    td.style.backgroundColor="lightblue";
+  }
+  tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+  div.appendChild(table);
+  }
+  
+  
+  
+  
+  
+  
+  
+  function findpath(pathlength,path){
+  
+if(start_row==finish_row && start_col==finish_col){
+  
+  pathlength=0;
+  return;
+}
+
+
+for(let i=0;i<=m+1;i++){
+grid[0][i]=1;
+grid[m+1][i]=1;
+grid[i][0]=1;
+grid[i][m+1]=1;
+}
+
+here_row=start_row;
+here_col=start_col;
+
+grid[start_row][start_col]=2;
+
+while((true)){
+  for(let i=0;i<4;i++){
+    neighbour_row=here_row+offset[0][i];
+    neighbour_col=here_col+offset[1][i];
+
+    if(grid[neighbour_row][neighbour_col]===0){
+      grid[neighbour_row][neighbour_col]=grid[here_row][here_col]+1;
+      if(neighbour_row==finish_row && neighbour_col==finish_col){
+        break;
+      }
+      else{
+        
+        queue[0][rear]=neighbour_row;
+        queue[1][rear]=neighbour_col;
+        rear++;
+
+
+      }
+
+
+    }
+
+
+
+  }
+ 
+if(neighbour_row==finish_row && neighbour_col==finish_col){
+  break;
+}
+
+if(rear<front){
+  return false;
+}
+here_row=queue[0][front];
+here_col=queue[1][front];
+front++;
+
+
+}
+
+pathlength=grid[finish_row][finish_col]-2;
+
+here_row=finish_row;
+here_col=finish_col;
+
+for(let j=pathlength;j>=0;j--){
+  path[0][j]=here_row;
+  path[1][j]=here_col;
+  
+  for(let i=0;i<4;i++){
+    neighbour_row=here_row+offset[0][i];
+    neighbour_col=here_col+offset[1][i];
+
+    if(grid[neighbour_row][neighbour_col]==grid[here_row][here_col]-1){
+      break;
+    }
+  }
+  here_row=neighbour_row;
+  here_col=neighbour_col;
+}
+path[0][j]=neighbour_row;
+path[1][j]=neighbour_col;
+
+return true;
+   }
+   
+
+   findpath(pathlength,path);
+   path[0][0]=1;
+  path[1][0]=1;
+
+   for(let i=0;i<=grid[finish_row][finish_col]-2;i++){
+     console.log(path[0][i]+"   "+path[1][i]);}
+   
+  
+   draw(grid);
+  
+  
+  document.getElementById('btn').addEventListener("click",async function()
+    {
+  for(let a=1;a<=grid[finish_row][finish_col]-2;a++){
+    margin_top+=(path[0][a]-path[0][a-1])*80;
+    margin_left+=(path[1][a]-path[1][a-1])*80;
+    image.style.marginTop=margin_top;
+    image.style.marginLeft=margin_left;
+    document.getElementById("myAudio").play();
+    await new Promise(resolve => setTimeout(resolve, 1500));
+  }
+ }
+  );
+   
+      </script>
